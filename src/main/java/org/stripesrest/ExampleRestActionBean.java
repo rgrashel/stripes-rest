@@ -26,16 +26,22 @@ import net.sourceforge.stripes.validation.ValidationErrors;
 import net.sourceforge.stripes.validation.ValidationMethod;
 
 @UrlBinding( "/stripes-rest" )
-public class ExampleRestActionBean implements RestApiActionBean
+public class ExampleRestActionBean implements RestActionBean
 {
     @Validate( on = "head", required = true )
     private String id;
     
     public Resolution get()
     {
-        Map< String, String > response = new HashMap< String, String >();
+        Map< String, Object > response = new HashMap< String, Object >();
         response.put( "foo", "bar" );
         response.put( "hello", "world" );
+
+        Map< String, Number > nested = new HashMap< String, Number >();
+        nested.put( "one", 1 );
+        nested.put( "two", 2 );
+        
+        response.put( "numbers", nested );
         
         return new JsonStreamingResolution( response );
     }

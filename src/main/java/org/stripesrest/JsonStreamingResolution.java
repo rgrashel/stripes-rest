@@ -15,35 +15,53 @@
  */
 package org.stripesrest;
 
-import com.google.gson.GsonBuilder;
-import net.sourceforge.stripes.action.StreamingResolution;
+import java.io.Writer;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import net.sourceforge.stripes.action.Resolution;
 
 /**
- * This resolution is intended to be used with Stripes REST action beans.  This
- * type of resolution extends streaming resolution and will take a Java object 
- * and serialize it to JSON automatically.
+ * This resolution is intended to be used with Stripes REST action beans. This
+ * type of resolution will take a Java object and serialize it to JSON
+ * automatically.
  */
-public class JsonStreamingResolution extends StreamingResolution
+public class JsonStreamingResolution implements Resolution
 {
+
+    private final String rawJsonText;
+
     /**
-     * This constructor should be used if the caller has already serialized
-     * the object into JSON.
-     * 
+     * This constructor should be used if the caller has already serialized the
+     * object into JSON.
+     *
      * @param rawJsonText - Raw text JSON string
      */
     public JsonStreamingResolution( String rawJsonText )
     {
-        super( "application/json", rawJsonText );
+        this.rawJsonText = rawJsonText;
     }
-    
+
     /**
-     * This constructor should be used if the caller wants to return an
-     * object and have it automatically serialized into JSON.
-     * 
-     * @param objectToSerialize - Object to serialize into JSON 
+     * This constructor should be used if the caller wants to return an object
+     * and have it automatically serialized into JSON.
+     *
+     * @param objectToSerialize - Object to serialize into JSON
      */
     public JsonStreamingResolution( Object objectToSerialize )
     {
-        super( "application/json", new GsonBuilder().setPrettyPrinting().create().toJson( objectToSerialize ) );
+        JsonBuilder builder = new JsonBuilder(objectToSerialize);
+        this.rawJsonText = builder.build();
+    }
+
+    /**
+     * Converts the object passed in to JSON and streams it back to the
+     * client.
+     */
+    public void execute( HttpServletRequest request, HttpServletResponse response ) throws Exception
+    {
+        response.setContentType("application/json");
+        Writer writer = response.getWriter();
+        writer.write(rawJsonText);
+        response.flushBuffer();
     }
 }

@@ -20,6 +20,6 @@ import net.sourceforge.stripes.action.ActionBean;
 /**
  * Every Stripes REST action bean should implement this interface.
  */
-public interface RestApiActionBean extends ActionBean
+public interface RestActionBean extends ActionBean
 {
 }

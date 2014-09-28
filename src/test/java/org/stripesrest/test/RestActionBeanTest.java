@@ -21,6 +21,7 @@ import net.sourceforge.stripes.controller.DispatcherServlet;
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
+import net.sourceforge.stripes.util.Log;
 import org.stripesrest.ExampleRestActionBean;
 import org.testng.annotations.Test;
 
@@ -29,6 +30,8 @@ import org.testng.annotations.Test;
  */
 public class RestActionBeanTest
 {
+    private static final Log log = Log.getInstance(RestActionBeanTest.class);
+    
     private MockServletContext getMockServletContext()
     {
         MockServletContext ctx = new MockServletContext("test");
