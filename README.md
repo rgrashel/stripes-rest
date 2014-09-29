@@ -36,8 +36,8 @@ Add Stripes Rest Interceptor to the Stripes filter `Extension.Packages` configur
 
 Creating a RESTful Action Bean requires only the following two things:
 
-1) Have your action bean implement the (empty) RestActionBean interface
-2) Provide an event handler method that is the same name as the HTTP verb you wish to implement: get(), post(), put(), delete(), head().
+* Have your action bean implement the (empty) RestActionBean interface
+* Provide an event handler method that is the same name as the HTTP verb you wish to implement: get(), post(), put(), delete(), head().
 
 The Stripes REST Action Bean Interceptor will detect when your REST service is called and automatically invoke the proper HTTP verb event handler method.  
 
