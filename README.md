@@ -72,7 +72,7 @@ public CalculatorRestActionBean implements RestActionBean
     
     public void setActionBeanContext( ActionBeanContext actionBeanContext ) { this.actionBeanContext = actionBeanContext; }
     public ActionBeanContext getActionBeanContext() { return this.actionBeanContext; }
-    private ActionBeanContext actionBeanContext();
+    private ActionBeanContext actionBeanContext;
 }
 
 ```
