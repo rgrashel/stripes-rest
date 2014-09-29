@@ -76,9 +76,7 @@ public CalculatorRestActionBean implements RestActionBean
 }
 
 ```
-
 Accessing this service via a CURL call would look like this:
-
 ```text
 curl -i -X POST -d "firstNumber=2" -d "secondNumber=2" http://<hostname>/sum  
 ```
