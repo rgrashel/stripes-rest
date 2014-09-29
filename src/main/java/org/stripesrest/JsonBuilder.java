@@ -31,8 +31,18 @@ public class JsonBuilder
 
     private JavaScriptBuilder javascriptBuilder;
 
+    /**
+     * Constructs a new JsonBuilder object which is used to convert
+     * the passed Java object into JSON -- exluding the optional list
+     * of objects passed.
+     * 
+     * @param root - Root object to convert to JSON
+     * @param objectsToExclude - Objects to exclude from the resulting JSON
+     */
     public JsonBuilder( Object root, Object... objectsToExclude )
     {
+        // Construct the Stripes JavascriptBuilder.  This will be used to
+        // create a Javascript object which will be converted to JSON.
         javascriptBuilder = new JavaScriptBuilder(root, objectsToExclude);
     }
 
@@ -68,12 +78,13 @@ public class JsonBuilder
     {
         try
         {
-            // Convert the object to a Javascript representation
+            // Create the Javascript enging to be used for JSON conversion
             String javascriptString = javascriptBuilder.build();
             ScriptEngineManager manager = new ScriptEngineManager();
             ScriptEngine engine = manager.getEngineByName("JavaScript");
 
-            // Take the Javascript representation and convert it to JSON
+            // Convert the root object to Javascript, and then take the 
+            // Javascript representation and convert it to JSON
             // using the Rhino scripting engine within the JDK
             StringBuilder jsonStringBuilder = new StringBuilder();
             engine.put("jsonStringBuilder", jsonStringBuilder);
