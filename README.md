@@ -91,8 +91,7 @@ HTTP "Bad Request" error code (400).
 
 ## HTTP Verb Calls Made To REST Action Beans Which Are Not Implemented
 
-If a caller tries to access a REST action bean that does not implement the HTTP verb/method, then an ErrorResolution will be 
-returned back to the caller with a "Method Not Allowed" HTTP error code (405).
+If a caller tries to access a REST action bean that does not implement the HTTP verb/method asked for, then an ErrorResolution will be returned back to the caller with a "Method Not Allowed" HTTP error code (405).
 
 ## License
 
