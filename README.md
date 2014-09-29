@@ -41,11 +41,14 @@ Creating a RESTful Action Bean requires only the following two things:
 
 The Stripes REST Action Bean Interceptor will detect when your REST service is called and automatically invoke the proper HTTP verb event handler method.  
 
+**NOTE:** POST verbs accept parameters using standard (application/x-www-form-urlencoded) HTTP format.
+
 ## Examples
 
 ### Examples REST ActionBean To Add Two Numbers Using A POST verb, create a result, and return the result as JSON.
 
 ```java
+@UrlBinding( "/sum" )
 public CalculatorRestActionBean implements RestActionBean
 {
     @Validate( on = "post", required = true)
@@ -72,6 +75,12 @@ public CalculatorRestActionBean implements RestActionBean
     private ActionBeanContext actionBeanContext();
 }
 
+```
+
+Accessing this service via a CURL call would look like this:
+
+```text
+curl -i -X POST -d "firstNumber=2" -d "secondNumber=2" http://<hostname>/sum  
 ```
 
 It's that easy!  Stripes will still handle all of the validation, type conversion, and @Before/@After just like it
