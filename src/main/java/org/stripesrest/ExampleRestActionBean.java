@@ -43,7 +43,7 @@ public class ExampleRestActionBean implements RestActionBean
         
         response.put( "numbers", nested );
         
-        return new JsonStreamingResolution( response );
+        return new JsonResolution( response );
     }
     
     @ValidationMethod( on = "head" )
@@ -54,7 +54,7 @@ public class ExampleRestActionBean implements RestActionBean
     
     public Resolution head()
     {
-        return new JsonStreamingResolution( "Successful head!" );
+        return new JsonResolution( "Successful head!" );
     }
     
     public void setId( String id )

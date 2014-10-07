@@ -25,7 +25,7 @@ import net.sourceforge.stripes.action.Resolution;
  * type of resolution will take a Java object and serialize it to JSON
  * automatically.
  */
-public class JsonStreamingResolution implements Resolution
+public class JsonResolution implements Resolution
 {
 
     private final String rawJsonText;
@@ -36,7 +36,7 @@ public class JsonStreamingResolution implements Resolution
      *
      * @param rawJsonText - Raw text JSON string
      */
-    public JsonStreamingResolution( String rawJsonText )
+    public JsonResolution( String rawJsonText )
     {
         this.rawJsonText = rawJsonText;
     }
@@ -47,7 +47,7 @@ public class JsonStreamingResolution implements Resolution
      *
      * @param objectToSerialize - Object to serialize into JSON
      */
-    public JsonStreamingResolution( Object objectToSerialize )
+    public JsonResolution( Object objectToSerialize )
     {
         JsonBuilder builder = new JsonBuilder(objectToSerialize);
         this.rawJsonText = builder.build();
