@@ -37,7 +37,7 @@ import net.sourceforge.stripes.validation.ValidationErrors;
  */
 @Intercepts(
         {
-            LifecycleStage.HandlerResolution, LifecycleStage.CustomValidation
+            LifecycleStage.HandlerResolution,LifecycleStage.BindingAndValidation, LifecycleStage.CustomValidation
         })
 public class RestActionInterceptor implements Interceptor
 {
@@ -88,6 +88,32 @@ public class RestActionInterceptor implements Interceptor
                 // Nothing to process after hander resolution
             }
 
+            // After the binding and validation lifecycle stages, check for resource not found errors due to type conversion.
+            if ( ctx.getLifecycleStage() == LifecycleStage.BindingAndValidation )
+            {
+                // Do nothing before binding and validation
+                ctx.proceed();
+                
+                log.debug("(", ctx.getActionBean().getClass(), ") Checking for Resource Not Found errors after : ", ctx.getLifecycleStage().name());
+
+                // Check for Resource Not Found Errors.  If any exist, return 
+                // the 404.
+                ValidationErrors validationErrors = ctx.getActionBeanContext().getValidationErrors();
+                
+                for( List< ValidationError > validationErrorList : validationErrors.values() )
+                {
+                    for( ValidationError error : validationErrorList )
+                    {
+                        if ( ResourceNotFoundError.class.isAssignableFrom( error.getClass() ) )
+                        {
+                            return new ErrorResolution(HttpServletResponse.SC_NOT_FOUND, error.getMessage( null ) );
+                        }
+                    }
+                }
+
+                
+            }
+            
             // After the validation lifecycle stages, check for errors.  If any exist, then convert to an Error Resolution and return that
             if ( ctx.getLifecycleStage() == LifecycleStage.CustomValidation )
             {
