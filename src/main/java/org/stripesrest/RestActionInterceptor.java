@@ -37,7 +37,7 @@ import net.sourceforge.stripes.validation.ValidationErrors;
  */
 @Intercepts(
         {
-            LifecycleStage.HandlerResolution,LifecycleStage.BindingAndValidation, LifecycleStage.CustomValidation
+            LifecycleStage.HandlerResolution, LifecycleStage.BindingAndValidation, LifecycleStage.CustomValidation
         })
 public class RestActionInterceptor implements Interceptor
 {
@@ -66,7 +66,7 @@ public class RestActionInterceptor implements Interceptor
                 // Get the http method
                 String httpMethod = ctx.getActionBeanContext().getRequest().getMethod().toLowerCase();
 
-                log.debug("(" + ctx.getActionBean().getClass() , ") HTTP method : ", httpMethod);
+                log.debug("(" + ctx.getActionBean().getClass(), ") HTTP method : ", httpMethod);
 
                 // See if the event handler for the HTTP method exists in the target REST action bean
                 try
@@ -93,27 +93,26 @@ public class RestActionInterceptor implements Interceptor
             {
                 // Do nothing before binding and validation
                 ctx.proceed();
-                
+
                 log.debug("(", ctx.getActionBean().getClass(), ") Checking for Resource Not Found errors after : ", ctx.getLifecycleStage().name());
 
                 // Check for Resource Not Found Errors.  If any exist, return 
                 // the 404.
                 ValidationErrors validationErrors = ctx.getActionBeanContext().getValidationErrors();
-                
-                for( List< ValidationError > validationErrorList : validationErrors.values() )
+
+                for ( List< ValidationError> validationErrorList : validationErrors.values() )
                 {
-                    for( ValidationError error : validationErrorList )
+                    for ( ValidationError error : validationErrorList )
                     {
-                        if ( ResourceNotFoundError.class.isAssignableFrom( error.getClass() ) )
+                        if ( ResourceNotFoundError.class.isAssignableFrom(error.getClass()) )
                         {
-                            return new ErrorResolution(HttpServletResponse.SC_NOT_FOUND, error.getMessage( null ) );
+                            return new ErrorResolution(HttpServletResponse.SC_NOT_FOUND, error.getMessage(null));
                         }
                     }
                 }
 
-                
             }
-            
+
             // After the validation lifecycle stages, check for errors.  If any exist, then convert to an Error Resolution and return that
             if ( ctx.getLifecycleStage() == LifecycleStage.CustomValidation )
             {
@@ -176,10 +175,10 @@ public class RestActionInterceptor implements Interceptor
                                 allFieldErrors.add(fieldErrors);
                             }
                         }
+                        
+                        jsonErrorMap.put("fieldErrors", allFieldErrors);
                     }
 
-                    jsonErrorMap.put("fieldErrors", allFieldErrors);
-                    
                     JsonBuilder jsonBuilder = new JsonBuilder(jsonErrorMap);
 
                     log.debug("(", ctx.getActionBean().getClass(), ") Returning validation error resolution : ", ctx.getLifecycleStage().name());
