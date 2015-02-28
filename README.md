@@ -6,6 +6,7 @@ all HTTP verbs and have responses (Resolutions) automatically serialized into JS
 
 * There are no external dependencies for this framework.  It depends on a small subset of the libraries that Stripes itself depends on.
 * JSON serialization is performed by a combination of the Stripes native JavascriptBuilder and the JDK's scripting engine 
+* Full support for Stripes naive binding and validation.
 
 ## Configuration
 
