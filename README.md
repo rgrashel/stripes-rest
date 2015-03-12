@@ -15,11 +15,11 @@ all HTTP verbs and have responses (Resolutions) automatically serialized into JS
 Add the Stripes REST ActionBean Framework dependency to your project:
 
 ```xml
-<dependency>
-    <groupId>org.stripesrest</groupId>
-    <artifactId>stripesrest</artifactId>
-    <version>VERSION</version>
-</dependency>
+        <dependency>
+            <groupId>org.stripesrest</groupId>
+            <artifactId>stripesrest</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
 ```
 
 ### Stripes filter configuration
