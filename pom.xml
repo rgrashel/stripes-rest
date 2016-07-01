@@ -64,8 +64,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
@@ -254,8 +254,7 @@
         <dependency>
             <groupId>net.sourceforge.stripes</groupId>
             <artifactId>stripes</artifactId>
-            <version>1.5.8</version>
-            <optional>true</optional>
+            <version>1.6.0</version>
         </dependency>
     </dependencies>
 
@@ -289,11 +288,4 @@
             </build>
         </profile>
     </profiles>
-
-    <properties>
-        <project.build.resourceEncoding>ISO-8859-1</project.build.resourceEncoding>
-        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-        <maven.compiler.target>1.5</maven.compiler.target>
-        <maven.compiler.source>1.5</maven.compiler.source>
-    </properties>
 </project>

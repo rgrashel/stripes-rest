@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Rick Grashel.
+ * Copyright 2015 Rick Grashel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 package org.stripesrest;
 
 /**
- * Every Stripes REST action bean should implement the RestActionBean interface.
- * Doing this will trigger Stripes to handle REST calls
- * properly according to their HTTP request method and provide semantically-proper 
- * responses from event handler methods.
+ * This is an enumeration of all of the valid HTTP request method types
+ * which can be used 
+ * @author rgras_000
  */
-public interface RestActionBean
+public enum HttpRequestMethod
 {
+    GET, POST, HEAD, PUT, DELETE;
+    
 }

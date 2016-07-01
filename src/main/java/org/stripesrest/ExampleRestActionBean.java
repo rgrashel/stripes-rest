@@ -17,6 +17,7 @@ package org.stripesrest;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
@@ -26,11 +27,12 @@ import net.sourceforge.stripes.validation.ValidationErrors;
 import net.sourceforge.stripes.validation.ValidationMethod;
 
 @UrlBinding( "/stripes-rest" )
-public class ExampleRestActionBean implements RestActionBean
+public class ExampleRestActionBean implements ActionBean, RestActionBean
 {
     @Validate( on = "head", required = true )
     private String id;
     
+    @GET
     public Resolution get()
     {
         Map< String, Object > response = new HashMap< String, Object >();

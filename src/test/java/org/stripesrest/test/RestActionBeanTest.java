@@ -17,72 +17,168 @@ package org.stripesrest.test;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.sourceforge.stripes.controller.DispatcherServlet;
-import net.sourceforge.stripes.controller.StripesFilter;
+import javax.servlet.http.HttpServletResponse;
+import net.sourceforge.stripes.action.ActionBean;
+import net.sourceforge.stripes.action.ActionBeanContext;
+import net.sourceforge.stripes.action.DefaultHandler;
+import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 import net.sourceforge.stripes.util.Log;
-import org.stripesrest.ExampleRestActionBean;
+import net.sourceforge.stripes.validation.SimpleError;
+import net.sourceforge.stripes.validation.Validate;
+import net.sourceforge.stripes.validation.ValidationErrors;
+import net.sourceforge.stripes.validation.ValidationMethod;
+import org.stripesrest.JsonResolution;
+import org.stripesrest.POST;
+import org.stripesrest.RestActionBean;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
  * This is a series of tests for Stripes REST action beans.
  */
-public class RestActionBeanTest
+public class RestActionBeanTest implements ActionBean, RestActionBean
 {
-    private static final Log log = Log.getInstance(RestActionBeanTest.class);
-    
-    private MockServletContext getMockServletContext()
+
+    private static final Log log = Log.getInstance( RestActionBeanTest.class );
+
+    @Validate( on = "head", required = true )
+    private String id;
+
+    private MockServletContext context;
+
+    @BeforeClass
+    public void initCtx()
     {
-        MockServletContext ctx = new MockServletContext("test");
+        context = StripesTestFixture.createServletContext();
+    }
 
-        // Add the Stripes Filter
-        Map<String, String> filterParams = new HashMap<String, String>();
-        filterParams.put("ActionResolver.Packages", "org.stripesrest");
-        filterParams.put("Interceptor.Classes", "org.stripesrest.RestActionInterceptor");
-        ctx.addFilter(StripesFilter.class, "StripesFilter", filterParams);
+    @AfterClass
+    public void closeCtx()
+    {
+        context.close();
+    }
 
-        // Add the Stripes Dispatcher
-        ctx.setServlet(DispatcherServlet.class, "StripesDispatcher", null);
-        
-        return ctx;
+    public MockServletContext getMockServletContext()
+    {
+        return context;
+    }
+
+    @DefaultHandler
+    public Resolution get()
+    {
+        Map< String, Object> response = new HashMap< String, Object>();
+        response.put( "foo", "bar" );
+        response.put( "hello", "world" );
+
+        Map< String, Number> nested = new HashMap< String, Number>();
+        nested.put( "one", 1 );
+        nested.put( "two", 2 );
+
+        response.put( "numbers", nested );
+
+        return new JsonResolution( response );
+    }
+
+    @POST
+    public Resolution runtimeErrorPost()
+    {
+        throw new RuntimeException( "This is a completely unhandled exception." );
+    }
+
+    @ValidationMethod( on = "head" )
+    public void validateHeadCall( ValidationErrors errors )
+    {
+        errors.addGlobalError( new SimpleError( "The head request was not valid for whatever custom reason." ) );
+    }
+
+    public Resolution head()
+    {
+        return new JsonResolution( "Successful head!" );
+    }
+
+    public void setId( String id )
+    {
+        this.id = id;
+    }
+
+    public String getId()
+    {
+        return this.id;
+    }
+
+    private ActionBeanContext actionBeanContext;
+
+    public ActionBeanContext getContext()
+    {
+        return this.actionBeanContext;
+    }
+
+    public void setContext( ActionBeanContext actionBeanContext )
+    {
+        this.actionBeanContext = actionBeanContext;
     }
 
     @Test
     public void successfulGet() throws Exception
     {
-        MockRoundtrip trip = new MockRoundtrip(getMockServletContext(), ExampleRestActionBean.class);
-        trip.getRequest().setMethod("get");
+        MockRoundtrip trip = new MockRoundtrip( getMockServletContext(), getClass() );
+        trip.getRequest().setMethod( "GET" );
         trip.execute();
 
-        System.out.println(trip.getOutputString());
+        Assert.assertEquals( trip.getResponse().getStatus(), HttpServletResponse.SC_OK );
+        logTripResponse( trip );
     }
 
     @Test
     public void failedPost() throws Exception
     {
-        MockRoundtrip trip = new MockRoundtrip( getMockServletContext(), ExampleRestActionBean.class );
-        trip.getRequest().setMethod("post");
+        MockRoundtrip trip = new MockRoundtrip( getMockServletContext(), getClass() );
+        trip.getRequest().setMethod( "POST" );
         trip.execute();
-        System.out.println(trip.getResponse().getStatus() + " | Error Message : " + trip.getResponse().getErrorMessage() );
+        Assert.assertNotEquals( trip.getResponse().getStatus(), HttpServletResponse.SC_OK );
+        logTripResponse( trip );
     }
-    
+
     @Test
     public void missingRequiredParameterOnHead() throws Exception
     {
-        MockRoundtrip trip = new MockRoundtrip( getMockServletContext(), ExampleRestActionBean.class );
-        trip.getRequest().setMethod("head");
+        MockRoundtrip trip = new MockRoundtrip( getMockServletContext(), getClass() );
+        trip.getRequest().setMethod( "HEAD" );
         trip.execute();
-        System.out.println(trip.getResponse().getStatus() + " | Error Message : " + trip.getResponse().getErrorMessage() );
+        Assert.assertNotEquals( trip.getResponse().getStatus(), HttpServletResponse.SC_OK );
+        logTripResponse( trip );
     }
-    
+
     @Test
     public void failedCustomValidationOnHead() throws Exception
     {
-        MockRoundtrip trip = new MockRoundtrip( getMockServletContext(), ExampleRestActionBean.class );
-        trip.setParameter("id", "SOME_ID");
-        trip.getRequest().setMethod("head");
+        MockRoundtrip trip = new MockRoundtrip( getMockServletContext(), getClass() );
+        trip.setParameter( "id", "SOME_ID" );
+        trip.getRequest().setMethod( "HEAD" );
         trip.execute();
-        System.out.println(trip.getResponse().getStatus() + " | Error Message : " + trip.getResponse().getErrorMessage() );
-    }    
+        Assert.assertNotEquals( trip.getResponse().getStatus(), HttpServletResponse.SC_OK );
+        Assert.assertTrue( trip.getValidationErrors() != null && !trip.getValidationErrors().isEmpty() );
+        logTripResponse( trip );
+    }
+
+    @Test
+    public void testUnhandledExceptionAtRuntime() throws Exception
+    {
+        MockRoundtrip trip = new MockRoundtrip( getMockServletContext(), getClass() );
+        trip.getRequest().setMethod( "POST" );
+        trip.execute( "runtimeErrorPost" );
+        Assert.assertEquals( trip.getResponse().getStatus(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
+        logTripResponse( trip );
+    }
+
+    private void logTripResponse( MockRoundtrip trip )
+    {
+        log.debug( "TRIP RESPONSE: [Event=" + trip.getActionBean( getClass() ).getContext().getEventName() + "] [Status=" + trip.getResponse().getStatus()
+                + "] [Message=" + trip.getResponse().getOutputString() + "] [Error Message="
+                + trip.getResponse().getErrorMessage() + "]" );
+    }
 }

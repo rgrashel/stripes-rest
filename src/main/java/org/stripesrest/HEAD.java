@@ -15,12 +15,19 @@
  */
 package org.stripesrest;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * Every Stripes REST action bean should implement the RestActionBean interface.
- * Doing this will trigger Stripes to handle REST calls
- * properly according to their HTTP request method and provide semantically-proper 
- * responses from event handler methods.
+ * A Stripes event handler method on an action should have this annotation
+ * if it is intended to handle HTTP HEAD requests.
  */
-public interface RestActionBean
+@Target( ElementType.METHOD )
+@Retention( RetentionPolicy.RUNTIME )
+@Documented
+public @interface HEAD
 {
 }
